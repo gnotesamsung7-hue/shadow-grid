@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<title>Shadow Grid</title>
+<title>Mark's Shadow Grid</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=M+PLUS+Rounded+1c:wght@500;800&display=swap" rel="stylesheet">
@@ -29,6 +29,33 @@ button:focus-visible{outline:3px solid var(--azure);outline-offset:2px}
 #title{overflow-y:auto;padding:22px 16px 32px}
 .logo{font-family:var(--disp);font-size:46px;line-height:.95;margin:0;letter-spacing:.5px;text-shadow:4px 4px 0 var(--ink)}
 .logo span{display:block;color:var(--gold)}
+.logo small{display:block;font-size:17px;color:var(--rose);letter-spacing:1px;margin-bottom:8px;text-shadow:2px 2px 0 var(--ink)}
+.chap{display:flex;align-items:center;gap:12px;width:100%;background:var(--plate);border:2px solid var(--ink);border-radius:14px;padding:10px 12px;text-align:left;margin-bottom:8px}
+.chap .n{font-family:var(--disp);font-size:24px;color:var(--gold);width:26px;text-align:center}
+.chap .t{flex:1;min-width:0}
+.chap .t b{display:block;font-size:15px;font-weight:800}
+.chap .t small{display:block;font-size:12px;color:var(--muted)}
+.chap .st{font-size:12px;font-weight:800;padding:3px 9px;border-radius:99px;background:var(--ink);color:var(--muted)}
+.chap .st.next{background:var(--gold);color:var(--ink)}
+.chap .st.done{color:var(--azure)}
+.chap:disabled{opacity:.45;cursor:default}
+.codex h4{font-family:var(--disp);font-weight:400;font-size:15px;color:var(--gold);margin:14px 0 2px}
+.codex h4:first-of-type{margin-top:8px}
+.overlay.vn{align-items:flex-end;background:rgba(10,6,28,.9);padding:16px 14px calc(18px + env(safe-area-inset-bottom,0px))}
+.vnbox{width:100%;max-width:440px}
+.vntitle{font-family:var(--disp);font-size:24px;line-height:1.15;color:var(--paper);text-shadow:3px 3px 0 var(--ink);margin-bottom:14px}
+.vntitle small{display:block;font-size:13px;color:var(--rose);margin-bottom:4px}
+.vnpanel{background:var(--plate);border:3px solid var(--ink);border-radius:16px;padding:14px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 5px 0 var(--ink);min-height:108px}
+.vnpanel svg{width:76px;height:76px;flex:0 0 76px;border-radius:50%;border:3px solid var(--azure);background:var(--ink)}
+.vnpanel.e svg{border-color:var(--rose)}
+.vnpanel .grow{flex:1;min-width:0}
+.vnname{font-family:var(--disp);font-size:16px;color:var(--gold)}
+.vnpanel.e .vnname{color:var(--rose)}
+.vntext{font-size:16px;line-height:1.55;margin-top:4px}
+.vntext.narr{font-style:italic;color:var(--muted);margin-top:0}
+.vnmeta{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:12px;color:var(--muted)}
+.panel blockquote{margin:0 0 16px;padding:10px 12px;border-left:4px solid var(--gold);background:var(--ink);border-radius:0;text-align:left;font-size:14px;line-height:1.5;color:var(--paper)}
+.panel blockquote b{display:block;color:var(--gold);font-weight:800;margin-bottom:2px}
 .kana{font-family:var(--disp);font-size:14px;color:var(--rose);margin:10px 0 2px;letter-spacing:3px}
 .tag{color:var(--muted);margin:0 0 18px;font-size:15px}
 h2{font-family:var(--disp);font-weight:400;font-size:19px;margin:22px 0 10px}
@@ -80,6 +107,7 @@ details p{margin:8px 0;font-size:14px;line-height:1.55;color:var(--paper)}
 .cardbtn.on{background:var(--gold);color:var(--ink)}
 .legend{font-size:12px;color:var(--muted);line-height:1.35}
 .legend b{font-weight:800}
+#board3d{width:100%;height:100%;display:block;touch-action:none}
 .pausebtn{border:2px solid var(--ink);border-radius:10px;background:var(--plate2);width:38px;height:34px;font-weight:800}
 /* overlays */
 .overlay{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -116,29 +144,56 @@ details p{margin:8px 0;font-size:14px;line-height:1.55;color:var(--paper)}
 <body>
 <div id="app">
  <section id="title" class="screen">
-  <h1 class="logo">Shadow<span>Grid</span></h1>
+  <h1 class="logo"><small>Mark's</small>Shadow<span>Grid</span></h1>
   <div class="kana">シャドウ・グリッド</div>
-  <p class="tag">Hidden squads on a hex battlefield. Find the enemy President in three minutes.</p>
+  <p class="tag">Every night at 3:00, a silver fog called the Veil falls over Lumina City for three minutes. Inside it, your squad fights its own reflection.</p>
+
+  <h2>Pace</h2>
+  <div class="row" id="shots"></div>
+
+  <h2>Story</h2>
+  <div id="chapters"></div>
+
+  <h2>Quick battle</h2>
+  <div class="maps" id="maps"></div>
+  <button class="btn start" id="startBtn">Quick battle</button>
 
   <h2>Your squad</h2>
   <div class="squad" id="squad"></div>
   <div class="tri"><b>Armor</b> beats Infantry. <b>Infantry</b> beats Anti-Tank. <b>Anti-Tank</b> beats Armor. Same type, both fall. The <b>Commander</b> beats every troop, but a <b>Spy</b> wins any fight it starts.</div>
 
-  <h2>Battlefield</h2>
-  <div class="maps" id="maps"></div>
-
-  <h2>Shot clock</h2>
-  <div class="row" id="shots"></div>
-
-  <button class="btn start" id="startBtn">Deploy squad</button>
+  <details class="codex">
+   <summary>Codex: the world of the Shadow Grid</summary>
+   <h4>Lumina City</h4>
+   <p>A harbor city that never quite sleeps. Every night at exactly 3:00 a.m., a silver fog called the Veil rolls in from the river and stays for three minutes. Clocks stop, phones go dark, and in the morning nobody remembers a thing. People call it the Hollow Hour.</p>
+   <h4>The Veil</h4>
+   <p>Inside the Veil, nothing has a face until it is touched. That is why every unit is a shadow until it clashes, and why whole squads vanish in the forests, where the fog runs thickest. From high ground the fog thins enough to make out shapes.</p>
+   <h4>The Shadow Grid</h4>
+   <p>Inside the Veil, the streets of Lumina City fold into a field of hexagons that shifts every night. The Night Division calls it the Shadow Grid. Whoever controls the Grid when the Veil lifts controls what the city remembers.</p>
+   <h4>Night Division</h4>
+   <p>A secret police unit that fights whatever comes through the Veil. On the streets, its spirit-gun officers hunt ghouls one alley at a time. On the battlefield, its tactical squad fights the larger war, directed over comms by Field Director Mark Dave.</p>
+   <h4>The Rose Legion</h4>
+   <p>When the Veil touches a mirror, it can copy whoever is reflected in it. The Rose Legion is an army of these copies, called Echoes: perfect doubles of the Night Division squad, wearing their faces in rose red. They fight exactly as well as the people they were copied from.</p>
+   <h4>The President's anchor</h4>
+   <p>President Aoi refused to leave the city. Her will anchors Lumina City to reality. When an Echo of the President shatters, every Echo loyal to her loses its shape. If the real Aoi is taken, the city wakes up on the wrong side of the mirror.</p>
+   <h4>Lantern crates and the lumen barrage</h4>
+   <p>Spirit officers drop lantern crates through the fog with supplies: Recon, Smoke or a Rally order. At two minutes in, the city's lighthouses fire lumen shells that burn the Veil away from the edges inward. Anything still standing at the edges burns with it. At 3:03 the Veil lifts, and whoever holds more of the field holds the night.</p>
+   <h4>The squad</h4>
+   <p><b>Kaede</b>, Armor. Hot-headed tank ace who named her tank Biscuit and talks to it more than to people.</p>
+   <p><b>Haru</b>, Infantry. First-year rifleman, too honest to bluff, so he trusts everyone else to do it for him.</p>
+   <p><b>Mio</b>, Anti-Tank. Rocket lancer and Kaede's rival since academy. Her launcher has more stickers than paint.</p>
+   <p><b>Sora</b>, Commander. The silver-haired marshal has never lost a duel to a soldier. She only fears what she cannot see.</p>
+   <p><b>Kage</b>, Spy. Nobody in the Division has seen Kage's face. Strikes once, from the dark, then disappears.</p>
+   <p><b>President Aoi</b>, VIP. The youngest president in the city's history, and the calmest person in any room.</p>
+  </details>
 
   <details>
    <summary>How to play</summary>
-   <p>Each turn, move one piece to a neighbouring hex. Moving onto an enemy starts a clash: both units are revealed and the loser is removed. The winner stays exposed to the enemy.</p>
-   <p>Enemy units look like hooded tokens until you learn what they are. Units hiding in a forest are invisible until something bumps into them.</p>
+   <p>Each turn, move one unit to a neighbouring hex. Moving onto an enemy starts a clash: both units are revealed and the loser is removed. The winner stays exposed to the enemy.</p>
+   <p>Echoes look like hooded tokens until you learn what they are. Units hiding in a forest are invisible until something bumps into them.</p>
    <p>Terrain: water blocks movement. In the city, defenders win ties, and defending Infantry beats Armor. Armor can't enter forests but can dash 2 hexes across open plains (no attack on a dash). A unit on a hill senses the type of enemies next to it.</p>
-   <p>The VIP can't attack, except the enemy VIP, and can't move two turns in a row.</p>
-   <p>Supply crates drop at 0:45 and 1:30: Recon reveals an enemy, Smoke hides one of your exposed units, Rally gives an extra move. At 2:00 artillery hits the outer columns, at 2:30 the back rows. Any unit ending its turn there is destroyed. At 3:00 the side with more units wins.</p>
+   <p>The President can't attack, except the enemy President, and can't move two turns in a row.</p>
+   <p>Lantern crates drop at 0:45 and 1:30: Recon reveals an enemy, Smoke hides one of your exposed units, Rally gives an extra move. At 2:00 the lumen barrage hits the outer columns, at 2:30 the back rows. Any unit ending its turn there is destroyed. When the Veil lifts at 3:00, the side with more units wins.</p>
   </details>
  </section>
 
@@ -146,7 +201,7 @@ details p{margin:8px 0;font-size:14px;line-height:1.55;color:var(--paper)}
   <header class="hud">
    <div class="side e"><span class="sw" style="background:var(--rose)"></span><span>Rose</span><b id="eCount">12</b></div>
    <div class="clock" id="clock">3:00</div>
-   <div class="side p"><b id="pCount">12</b><span>Azure</span><span class="sw" style="background:var(--azure)"></span></div>
+   <div class="side p"><b id="pCount">12</b><span>Night</span><span class="sw" style="background:var(--azure)"></span></div>
   </header>
   <div class="ticker" id="ticker"></div>
   <div id="boardWrap"><svg id="board" role="img" aria-label="Hex battlefield"></svg></div>
@@ -154,6 +209,8 @@ details p{margin:8px 0;font-size:14px;line-height:1.55;color:var(--paper)}
    <div class="turnlabel p" id="turnLabel">Deployment</div>
    <div class="pips" id="pips" title="Timeouts"></div>
    <div class="shot" id="shotBar"><i id="shotFill"></i></div>
+   <button class="pausebtn" id="resetBtn" aria-label="Reset camera">⟲</button>
+   <button class="pausebtn" id="viewBtn" aria-label="Switch 2D or 3D view">2D</button>
    <button class="pausebtn" id="pauseBtn" aria-label="Pause">II</button>
   </div>
   <div class="info" id="info"></div>
@@ -164,12 +221,14 @@ details p{margin:8px 0;font-size:14px;line-height:1.55;color:var(--paper)}
 <div id="toast" role="status"></div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="sprite"></defs></svg>
 
+<script src="lib/three.min.js"></script>
+<script src="lib/OrbitControls.js"></script>
 <script>
 'use strict';
 const ROWS=8,COLS=7,HW=60,HR=HW/Math.sqrt(3),VS=HR*1.5,PX=6,PY=6;
 const VBW=COLS*HW+HW/2+PX*2,VBH=HR*2+VS*(ROWS-1)+PY*2;
 const INK='#1B1035';
-const TEAM={P:{name:'Azure Division',short:'Azure',accent:'#38D6F5',bg:'#12385A'},E:{name:'Rose Legion',short:'Rose',accent:'#FF4D7E',bg:'#4A1433'}};
+const TEAM={P:{name:'Night Division',short:'Night',accent:'#38D6F5',bg:'#12385A'},E:{name:'Rose Legion',short:'Rose',accent:'#FF4D7E',bg:'#4A1433'}};
 const U={
  A:{name:'Armor',hero:'Kaede',role:'Tank ace',beats:'Infantry',badge:'A',color:'#FF8A3D',val:4},
  I:{name:'Infantry',hero:'Haru',role:'Rifle squad',beats:'Anti-Tank',badge:'I',color:'#5BD67A',val:4},
@@ -276,16 +335,18 @@ function portrait(type,team){
  }
  return `<g clip-path="url(#pclip)"><circle cx="50" cy="50" r="50" fill="${TEAM[team].bg}"/>${pre}${back}${bod}${afterBody}${neck}${face}${blush}${eyes}${mouth}${afterFace}${bangs}${brows}${acc2}</g>`;
 }
+const UNK_INNER=`<circle cx="50" cy="50" r="50" fill="#3A1030"/><path d="M18 104 Q16 60 30 38 Q38 16 50 16 Q62 16 70 38 Q84 60 82 104 Z" fill="#5C1A44"/><path d="M34 52 Q50 44 66 52 Q64 68 50 72 Q36 68 34 52 Z" fill="#1F0818"/><circle cx="43" cy="57" r="3" fill="#FF4D7E"/><circle cx="57" cy="57" r="3" fill="#FF4D7E"/>`;
 function buildSprite(){
  let s=`<clipPath id="pclip"><circle cx="50" cy="50" r="50"/></clipPath>
  <pattern id="hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="#FF4D7E" opacity=".35"/><rect width="4" height="10" fill="#FF4D7E" opacity=".75"/></pattern>
- <symbol id="unk" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#3A1030"/><path d="M18 104 Q16 60 30 38 Q38 16 50 16 Q62 16 70 38 Q84 60 82 104 Z" fill="#5C1A44"/><path d="M34 52 Q50 44 66 52 Q64 68 50 72 Q36 68 34 52 Z" fill="#1F0818"/><circle cx="43" cy="57" r="3" fill="#FF4D7E"/><circle cx="57" cy="57" r="3" fill="#FF4D7E"/></symbol>`;
+ <symbol id="unk" viewBox="0 0 100 100">${UNK_INNER}</symbol>`;
  for(const t in U)for(const tm of['P','E'])s+=`<symbol id="p-${t}-${tm}" viewBox="0 0 100 100">${portrait(t,tm)}</symbol>`;
  $('sprite').innerHTML=s;
 }
 
 /* ---------- game state ---------- */
 let S={phase:'title'},PID=0,mapIdx=0,shotSec=5;
+try{const v=localStorage.getItem('msg-pace');if(v!==null&&['0','5','10'].includes(v))shotSec=+v;}catch(e){}
 function mkPiece(side,type,r,c){return{id:++PID,side,type,r,c,known:{P:side==='P',E:side==='E'},sense:{P:null,E:null}};}
 function buildTerrain(m){const t={};for(const k in m.half){const[r,c]=k.split(',').map(Number);t[r+','+c]=m.half[k];t[(ROWS-1-r)+','+(COLS-1-c)]=m.half[k];}return t;}
 const terr=(r,c)=>S.terr[r+','+c]||'';
@@ -295,7 +356,7 @@ const visibleTo=(o,v)=>o.side===v||o.known[v]||!!o.sense[v]||terr(o.r,o.c)!=='F'
 function zoneHot(r,c,look){const t=S.elapsed+look;return(t>=120000&&(c===0||c===COLS-1))||(t>=150000&&(r===0||r===ROWS-1));}
 function newGame(mi,shot){
  const m=MAPS[mi];
- S={map:m,terr:buildTerrain(m),pieces:[],turn:'P',phase:'deploy',elapsed:0,evIdx:0,shotMax:shot*1000,shotLeft:shot*1000,
+ S={map:m,terr:buildTerrain(m),pieces:[],turn:'P',phase:'deploy',elapsed:0,evIdx:0,relaxed:shot===0,shotMax:(shot||5)*1000,shotLeft:(shot||5)*1000,
   timeouts:{P:0,E:0},vipMoved:{P:false,E:false},movedVip:false,cards:{P:[],E:[]},crates:[],extraMove:false,
   sel:null,mode:null,busy:false,paused:false,clashOpen:false,over:null,resultShown:false,last:null,headless:false};
  autoDeploy('E');autoDeploy('P');
@@ -359,17 +420,17 @@ function pickCrate(p){
  const card=['recon','smoke','rally'][rnd(3)];
  if(card==='rally'){S.extraMove=true;if(p.side==='E')toast('Rose Legion grabbed a Rally crate');}
  else{if(S.cards[p.side].length<3)S.cards[p.side].push(card);
-  toast(p.side==='P'?`Crate: ${card==='recon'?'Recon':'Smoke'} card added`:'Rose Legion grabbed a supply crate');}
+  toast(p.side==='P'?`Lantern crate: ${card==='recon'?'Recon':'Smoke'} card added`:'The Rose Legion grabbed a lantern crate');}
 }
 function fireEvent(ev){
  if(ev==='drop'){
   const cells=[];for(let r=2;r<=5;r++)for(let c=0;c<COLS;c++)if(terr(r,c)!=='W'&&!pieceAt(r,c)&&!S.crates.some(k=>k.r===r&&k.c===c))cells.push({r,c});
   if(cells.length)S.crates.push(cells[rnd(cells.length)]);
-  toast('Supply drop! First unit there gets a card');
- }else if(ev==='warnCols')toast('Barrage hits the outer columns in 10 seconds');
- else if(ev==='cols')toast('Barrage! Outer columns are deadly');
- else if(ev==='warnRows')toast('Barrage hits both back rows in 10 seconds');
- else if(ev==='rows')toast('Barrage! Back rows are deadly');
+  toast('Lantern crate dropped! First unit there gets a card');
+ }else if(ev==='warnCols')toast(`Lumen barrage hits the outer columns ${soon()}`);
+ else if(ev==='cols')toast('Lumen barrage! The outer columns are burning');
+ else if(ev==='warnRows')toast(`Lumen barrage hits both back rows ${soon()}`);
+ else if(ev==='rows')toast('Lumen barrage! The back rows are burning');
  else if(ev==='end'){
   const n=s=>S.pieces.filter(p=>p.side===s).length,np=n('P'),ne=n('E');
   if(np!==ne)finish(np>ne?'P':'E','sudden');
@@ -378,15 +439,18 @@ function fireEvent(ev){
  }
  render();
 }
+const soon=()=>S.relaxed?'in 4 turns':'in 10 seconds';
+const until=ms=>S.relaxed?`${Math.max(1,Math.ceil(ms/3000))} turns`:fmt(ms);
 function processEvents(){while(!S.over&&S.evIdx<EVENTS.length&&S.elapsed>=EVENTS[S.evIdx][0]*1000){const ev=EVENTS[S.evIdx][1];S.evIdx++;fireEvent(ev);}}
 function finish(winner,reason){if(S.over)return;S.over={winner,reason};S.phase='over';S.sel=null;S.mode=null;}
 function endTurn(){
  const side=S.turn;
  for(const p of S.pieces.filter(q=>q.side===side&&zoneHot(q.r,q.c,0))){
   removeP(p);if(p.type==='V'){finish(other(side),'barrage');}
-  else if(!S.headless)toast(side==='P'?`Your ${U[p.type].name} was lost to the barrage`:'An enemy unit was lost to the barrage');
+  else if(!S.headless)toast(side==='P'?`${U[p.type].hero} was caught in the lumen barrage`:'An Echo burned in the lumen barrage');
  }
  S.vipMoved[side]=S.movedVip;S.movedVip=false;S.extraMove=false;
+ if(S.relaxed&&!S.headless){S.elapsed+=3000;processEvents();}
  if(S.over){render();maybeResult();return;}
  S.turn=other(side);S.shotLeft=S.shotMax;S.sel=null;S.mode=null;
  startTurn();
@@ -420,7 +484,7 @@ function nearestEnemy(side,r,c){let b=null;for(const o of S.pieces)if(o.side!==s
 function scoreMove(p,mv,side){
  const o=pieceAt(mv.r,mv.c),seen=o&&o.side!==side&&visibleTo(o,side)?o:null;
  const fwd=side==='E'?1:-1,val=U[p.type].val,look=p.type==='V'?30000:9000;
- let sc=Math.random()*.7;
+ let sc=Math.random()*(S.noise||.7);
  if(seen){
   if(p.type==='V')return 1e6;
   const d=distFor(seen,side);let ev=0,pw=0;
@@ -461,7 +525,7 @@ function aiUseCards(side){
  const cards=S.cards[side],opp=other(side);
  for(let i=cards.length-1;i>=0;i--){
   if(cards[i]==='smoke'){const b=S.pieces.filter(p=>p.side===side&&p.known[opp]).sort((x,y)=>U[y.type].val-U[x.type].val)[0];
-   if(b){b.known[opp]=false;b.sense[opp]=null;cards.splice(i,1);if(side==='E')toast('Rose Legion used Smoke to hide a unit');}}
+   if(b){b.known[opp]=false;b.sense[opp]=null;cards.splice(i,1);if(side==='E')toast('The Rose Legion used Smoke to hide an Echo');}}
   else{const mine=S.pieces.filter(p=>p.side===side);
    const cand=S.pieces.filter(p=>p.side===opp&&!p.known[side]&&visibleTo(p,side)).map(p=>({p,d:Math.min(...mine.map(m=>hexDist(m.r,m.c,p.r,p.c)))})).sort((x,y)=>x.d-y.d);
    if(cand.length){cand[0].p.known[side]=true;cards.splice(i,1);if(side==='E')toast('Rose Legion used Recon on one of your units');}}
@@ -579,18 +643,19 @@ function fmt(ms){ms=Math.max(0,ms);const s=Math.ceil(ms/1000);return Math.floor(
 function updateHud(){
  if(S.phase==='title'||S.headless)return;
  const left=180000-S.elapsed;
- $('clock').textContent=S.phase==='deploy'?'3:00':fmt(left);
+ $('clock').textContent=S.relaxed?`${Math.max(0,Math.ceil(left/3000))} turns`:(S.phase==='deploy'?'3:00':fmt(left));
  $('clock').classList.toggle('late',S.phase==='battle'&&left<=30000);
  const fill=$('shotFill'),pct=S.turn==='P'&&S.phase==='battle'?Math.max(0,S.shotLeft/S.shotMax*100):0;
  fill.style.width=pct+'%';fill.classList.toggle('low',pct<40);
  let tk='';
- if(S.phase==='battle'&&S.evIdx<EVENTS.length){const[t,ev]=EVENTS[S.evIdx],inS=fmt(t*1000-S.elapsed);
-  tk={drop:`Supply drop in ${inS}`,warnCols:`Barrage on outer columns in ${fmt(120000-S.elapsed)}`,cols:`Barrage on outer columns in ${inS}`,warnRows:`Barrage on back rows in ${fmt(150000-S.elapsed)}`,rows:`Barrage on back rows in ${inS}`,end:`Sudden death in ${inS}`}[ev];}
+ if(S.phase==='battle'&&S.evIdx<EVENTS.length){const[t,ev]=EVENTS[S.evIdx],inS=until(t*1000-S.elapsed);
+  tk={drop:`Lantern crate in ${inS}`,warnCols:`Lumen barrage on outer columns in ${until(120000-S.elapsed)}`,cols:`Lumen barrage on outer columns in ${inS}`,warnRows:`Lumen barrage on back rows in ${until(150000-S.elapsed)}`,rows:`Lumen barrage on back rows in ${inS}`,end:`The Veil lifts in ${inS}`}[ev];}
  $('ticker').textContent=tk;
 }
 function render(){
  if(S.headless||S.phase==='title')return;
- renderBoard();
+ if(view3d&&G3.ok){$('board').style.display='none';init3D();G3.renderer.domElement.style.display='block';update3D();}
+ else{if(G3.renderer)G3.renderer.domElement.style.display='none';$('board').style.display='';renderBoard();}
  $('eCount').textContent=S.pieces.filter(p=>p.side==='E').length;
  $('pCount').textContent=S.pieces.filter(p=>p.side==='P').length;
  const tl=$('turnLabel');
@@ -598,15 +663,16 @@ function render(){
  else if(S.over){tl.textContent='Battle over';tl.className='turnlabel';}
  else{tl.textContent=S.turn==='P'?'Your move':'Rose Legion is moving';tl.className='turnlabel '+(S.turn==='P'?'p':'e');}
  $('pips').innerHTML=[0,1,2].map(i=>`<span class="${i<S.timeouts.P?'on':''}"></span>`).join('');
- $('shotBar').style.visibility=S.phase==='battle'?'visible':'hidden';
- $('pips').style.visibility=S.phase==='battle'?'visible':'hidden';
+ $('shotBar').style.display=S.phase==='battle'&&!S.relaxed?'':'none';
+ $('pips').style.display=S.phase==='battle'&&!S.relaxed?'':'none';
+ $('viewBtn').textContent=view3d&&G3.ok?'2D':'3D';$('viewBtn').style.display=G3.ok?'':'none';$('resetBtn').style.display=view3d&&G3.ok?'':'none';
  let info='';
- if(S.phase==='deploy')info=S.sel?`<b>${U[S.sel.type].hero}</b>, ${U[S.sel.type].name}. Tap another hex in your two rows to swap.`:'Arrange your squad. Tap a unit, then tap where it should stand. Keep your VIP hard to find.';
+ if(S.phase==='deploy')info=S.sel?`<b>${U[S.sel.type].hero}</b>, ${U[S.sel.type].name}. Tap another hex in your two rows to swap.`:'Arrange your squad. Tap a unit, then tap where it should stand. Keep President Aoi hard to find.';
  else if(S.mode==='recon')info='<b>Recon:</b> tap a hidden enemy unit to reveal it.';
  else if(S.mode==='smoke')info='<b>Smoke:</b> tap one of your exposed units to hide it again.';
  else if(S.sel){const u=U[S.sel.type];info=`<b>${u.hero}</b>, ${u.name}. ${{A:'Beats Infantry, loses to Anti-Tank. Can dash 2 hexes on plains.',I:'Beats Anti-Tank, loses to Armor. Strong in the city.',T:'Beats Armor, loses to Infantry.',C:'Beats every troop. Only a Spy can stop her.',S:'Wins any fight it starts. Dies if attacked.',V:'Can\'t attack. Can\'t move two turns in a row.'}[S.sel.type]}`;
   if(S.sel.type==='V'&&!getMoves(S.sel).length)info+=' Resting this turn.';}
- else if(S.phase==='battle')info=S.turn==='P'?'Tap one of your units to see where it can go. Red outline means attack.':'Watch the dashed red hexes: that was the enemy\'s last move.';
+ else if(S.phase==='battle')info=S.turn==='P'?'Tap one of your units to see where it can go. Red outline means attack.'+(view3d&&G3.ok?' Drag to rotate, pinch to zoom.':''):'Watch the dashed red hexes: that was the enemy\'s last move.';
  $('info').innerHTML=info;
  const ctl=$('controls');
  if(S.phase==='deploy')ctl.innerHTML=`<button class="btn ghost small" id="shuffleBtn">Shuffle</button><span class="grow"></span><button class="btn small" id="goBtn">Start battle</button>`;
@@ -621,7 +687,7 @@ function toast(msg){
 }
 function explain(cl){
  const a=cl.a.type,d=cl.d.type,r=cl.res;
- if(d==='V')return['VIP captured','The President has been taken.'];
+ if(d==='V')return cl.d.side==='E'?['Echo shattered','The false President breaks like glass.']:['President taken','Aoi is pulled into the mirror.'];
  if(a==='S')return[`${U.S.hero} strikes first`,'A Spy wins any fight it starts.'];
  if(d==='S')return[`${U.S.hero} is exposed`,'A Spy loses any fight where it is attacked.'];
  if(cl.terr==='U'&&r==='D'){if(a===d)return['The city holds','Defenders win ties in the city.'];if(a==='A'&&d==='I')return['Street ambush','Infantry defending in the city beats Armor.'];}
@@ -636,7 +702,7 @@ function showClash(cl){
   S.clashOpen=true;try{navigator.vibrate&&navigator.vibrate(45);}catch(e){}
   const[h,why]=explain(cl),ov=$('overlay');
   const st=k=>cl.res==='T'?'lose':((cl.res==='A')===(k==='A')?'win':'lose');
-  const f=(k,o)=>`<div class="fighter ${k} ${o.side} ${st(k)}"><svg viewBox="0 0 100 100"><use href="#p-${o.type}-${o.side}"/></svg><div class="nm">${U[o.type].hero}</div><div class="un">${o.side==='P'?'Your':'Enemy'} ${U[o.type].name}</div></div>`;
+  const f=(k,o)=>`<div class="fighter ${k} ${o.side} ${st(k)}"><svg viewBox="0 0 100 100"><use href="#p-${o.type}-${o.side}"/></svg><div class="nm">${U[o.type].hero}${o.side==='E'?"'s Echo":''}</div><div class="un">${o.side==='P'?'Night':'Rose'} ${U[o.type].name}</div></div>`;
   ov.className='overlay clash';
   ov.innerHTML=`<div class="clashbox">${f('A',cl.a)}<div class="vs">VS</div>${f('D',cl.d)}<div class="verdict">${h}</div><div class="why">${why}</div><div class="tapnote">Tap to continue</div></div>`;
   let done=false;const close=()=>{if(done)return;done=true;clearTimeout(tm);ov.className='overlay hidden';ov.innerHTML='';ov.onclick=null;S.clashOpen=false;res();};
@@ -647,13 +713,28 @@ function maybeResult(){
  if(!S.over||S.resultShown||S.headless||S.busy||S.clashOpen)return;
  S.resultShown=true;render();
  const w=S.over.winner,win=w==='P',reason=S.over.reason;
- const txt={vip:win?'You captured the enemy President.':'Your President was captured.',barrage:win?'The enemy President was caught in the barrage.':'Your President was caught in the barrage.',
-  nomoves:win?'The enemy has no moves left.':'You have no moves left.',timeouts:'Three timeouts. Rose Legion takes the field.',
-  sudden:win?'Time! You have more units standing.':'Time! Rose Legion has more units standing.',commander:win?'Time! Level on units, but your Commander still stands.':'Time! Level on units, but their Commander still stands.',draw:'Time! Both sides are level.'}[reason];
+ const txt={vip:win?'The Echo President shattered, and the Rose Legion fell apart with her.':'President Aoi was pulled into the mirror.',
+  barrage:win?'The Echo President burned in the lumen barrage.':'President Aoi was caught in the lumen barrage.',
+  nomoves:win?'The Rose Legion has no moves left.':'Your squad has no moves left.',timeouts:'Three missed orders. The Rose Legion takes the field.',
+  sudden:win?'The Veil lifted with more of your squad standing.':'The Veil lifted with more Echoes standing.',
+  commander:win?'The Veil lifted level, but Sora still stands.':'The Veil lifted level, but Sora\'s Echo still stands.',draw:'The Veil lifted with both sides level.'}[reason];
+ const story=S.story,stats=`Units left: you ${S.pieces.filter(p=>p.side==='P').length}, Echoes ${S.pieces.filter(p=>p.side==='E').length}.`;
  setTimeout(()=>{
   const ov=$('overlay');ov.className='overlay dim';
-  ov.innerHTML=`<div class="panel"><h3 style="color:${w===null?'var(--paper)':win?'var(--azure)':'var(--rose)'}">${w===null?'Draw':win?'Victory':'Defeat'}</h3><p>${txt}<br>Battle time ${fmt(Math.min(180000,S.elapsed)).replace(/^/,'')}. Units left: you ${S.pieces.filter(p=>p.side==='P').length}, enemy ${S.pieces.filter(p=>p.side==='E').length}.</p><div class="btns"><button class="btn" id="againBtn">Rematch</button><button class="btn ghost" id="titleBtn">Change battlefield</button></div></div>`;
-  $('againBtn').onclick=()=>{closeOverlay();startDeploy();};$('titleBtn').onclick=()=>{closeOverlay();showTitle();};
+  const head=`<h3 style="color:${w===null?'var(--paper)':win?'var(--azure)':'var(--rose)'}">${w===null?'Draw':win?'Victory':'Defeat'}</h3>`;
+  if(story===null||story===undefined){
+   ov.innerHTML=`<div class="panel">${head}<p>${txt}<br>${stats}</p><div class="btns"><button class="btn" id="againBtn">Rematch</button><button class="btn ghost" id="titleBtn">Back to title</button></div></div>`;
+   $('againBtn').onclick=()=>{closeOverlay();startDeploy();};
+  }else if(win){
+   ov.innerHTML=`<div class="panel">${head}<p>${txt}<br>${stats}</p><div class="btns"><button class="btn" id="contBtn">Continue story</button><button class="btn ghost" id="titleBtn">Back to title</button></div></div>`;
+   $('contBtn').onclick=()=>{closeOverlay();storyWin(story);};
+   progress=Math.max(progress,story+1);saveProgress();
+  }else{
+   const[k,line]=CH[story].lose,sp=speaker(k);
+   ov.innerHTML=`<div class="panel">${head}<p>${txt}</p><blockquote><b>${sp?sp.name:''}</b>${line}</blockquote><div class="btns"><button class="btn" id="againBtn">Retry chapter</button><button class="btn ghost" id="titleBtn">Back to title</button></div></div>`;
+   $('againBtn').onclick=()=>{closeOverlay();startDeploy();};
+  }
+  $('titleBtn').onclick=()=>{closeOverlay();showTitle();};
  },700);
 }
 function closeOverlay(){const ov=$('overlay');ov.className='overlay hidden';ov.innerHTML='';ov.onclick=null;}
@@ -665,6 +746,7 @@ function pause(){
 }
 function resume(){S.paused=false;closeOverlay();}
 window.handleBack=()=>{
+ const sk=$('skipBtn');if(sk){sk.click();return true;}
  if(S.paused){resume();return true;}
  if(S.phase==='battle'||S.phase==='deploy'){if(!S.clashOpen)pause();return true;}
  if(S.phase==='over'){closeOverlay();showTitle();return true;}
@@ -673,17 +755,237 @@ window.handleBack=()=>{
 window.onAppPause=()=>{if(S.phase==='battle'&&!S.paused)pause();};
 document.addEventListener('visibilitychange',()=>{if(document.hidden)window.onAppPause();});
 
+
+
+/* ---------- 3D view (three.js) ---------- */
+const G3={ok:false};
+let view3d=true;
+try{const cv=document.createElement('canvas');G3.ok=!!(window.THREE&&THREE.OrbitControls&&(cv.getContext('webgl')||cv.getContext('experimental-webgl')));}catch(e){G3.ok=false;}
+try{const v=localStorage.getItem('msg-view');if(v)view3d=v==='3d';}catch(e){}
+const TH={'':.16,W:.06,U:.2,F:.18,H:.42};
+const pos3=(r,c)=>{const[x,y]=center(r,c);return[(x-VBW/2)/HW,(y-VBH/2)/HW];};
+const IMG={},TEX={},SMAT={};
+function loadPortraits(){
+ const mk=(key,inner)=>new Promise(res=>{
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="256" height="256"><defs><clipPath id="pclip"><circle cx="50" cy="50" r="50"/></clipPath></defs>${inner}</svg>`;
+  const im=new Image();im.onload=()=>{IMG[key]=im;res();};im.onerror=()=>res();
+  im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);});
+ const jobs=[mk('unk',UNK_INNER)];
+ for(const t in U)for(const tm of['P','E'])jobs.push(mk(`p-${t}-${tm}`,portrait(t,tm)));
+ return Promise.all(jobs);
+}
+function tokenTex(p){
+ const show=p.side==='P'||p.known.P,sym=show?`p-${p.type}-${p.side}`:'unk';
+ let bt=null,bc=null;
+ if(show){bt=U[p.type].badge;bc=U[p.type].color;}else if(p.sense.P){bt=p.sense.P==='X'?'!':U[p.sense.P].badge;bc=p.sense.P==='X'?'#FF5BD8':U[p.sense.P].color;}
+ const eye=p.side==='P'&&p.known.E&&!S.over,sel=S.sel===p,key=[sym,p.side,bt,bc,eye,sel].join('|');
+ if(TEX[key])return TEX[key];
+ const cv=document.createElement('canvas');cv.width=cv.height=256;const g=cv.getContext('2d'),cx=128,cy=128,R=98;
+ if(sel){g.beginPath();g.arc(cx,cy,R+24,0,7);g.fillStyle='rgba(255,201,60,.95)';g.fill();}
+ g.beginPath();g.arc(cx,cy,R+9,0,7);g.fillStyle=INK;g.fill();
+ g.save();g.beginPath();g.arc(cx,cy,R,0,7);g.clip();
+ if(IMG[sym])g.drawImage(IMG[sym],cx-R,cy-R,R*2,R*2);else{g.fillStyle=TEAM[p.side].bg;g.fillRect(0,0,256,256);}
+ g.restore();
+ g.beginPath();g.arc(cx,cy,R,0,7);g.lineWidth=12;g.strokeStyle=TEAM[p.side].accent;g.stroke();
+ if(bt){const bx=cx+R*.72,by=cy+R*.72;g.beginPath();g.arc(bx,by,31,0,7);g.fillStyle=bc;g.fill();g.lineWidth=6;g.strokeStyle=INK;g.stroke();
+  g.fillStyle=INK;g.font=`800 ${bt.length>1?27:36}px system-ui,sans-serif`;g.textAlign='center';g.textBaseline='middle';g.fillText(bt,bx,by+2);}
+ if(eye){const ex=cx-R*.72,ey=cy-R*.72;g.beginPath();g.arc(ex,ey,29,0,7);g.fillStyle='#FF4D7E';g.fill();g.lineWidth=6;g.strokeStyle=INK;g.stroke();
+  g.beginPath();g.ellipse(ex,ey,17,10,0,0,7);g.fillStyle='#fff';g.fill();g.beginPath();g.arc(ex,ey,6,0,7);g.fillStyle=INK;g.fill();}
+ const t=new THREE.CanvasTexture(cv);t.anisotropy=4;
+ if(IMG[sym])TEX[key]=t;
+ return t;
+}
+function spriteMat(t){if(SMAT[t.uuid])return SMAT[t.uuid];const m=new THREE.SpriteMaterial({map:t,transparent:true});SMAT[t.uuid]=m;return m;}
+function resetCam(){
+ const a=G3.cam.aspect||.75,hf=2*Math.atan(Math.tan(20*Math.PI/180)*a);
+ const d=Math.min(21,Math.max(8.5,4.05/Math.tan(hf/2)));
+ G3.cam.position.set(0,d*Math.cos(.62),d*Math.sin(.62)+.3);G3.ctl.target.set(0,0,.3);G3.ctl.update();
+}
+function init3D(){
+ if(G3.renderer)return;
+ const wrap=$('boardWrap');
+ const ren=new THREE.WebGLRenderer({antialias:true});ren.setPixelRatio(Math.min(2,window.devicePixelRatio||1));ren.setClearColor(0x160F33);
+ ren.domElement.id='board3d';wrap.appendChild(ren.domElement);
+ const scene=new THREE.Scene();scene.fog=new THREE.Fog(0x160F33,18,34);
+ const cam=new THREE.PerspectiveCamera(40,1,.1,100);
+ const ctl=new THREE.OrbitControls(cam,ren.domElement);
+ ctl.enableDamping=true;ctl.dampingFactor=.12;ctl.enablePan=false;ctl.minDistance=4.5;ctl.maxDistance=22;ctl.minPolarAngle=.12;ctl.maxPolarAngle=1.28;ctl.rotateSpeed=.75;ctl.zoomSpeed=.9;
+ scene.add(new THREE.HemisphereLight(0xd8d0ff,0x2a1f55,.9));
+ const dl=new THREE.DirectionalLight(0xffffff,.7);dl.position.set(4,10,6);scene.add(dl);
+ const base=new THREE.Mesh(new THREE.CylinderGeometry(5.6,5.9,.3,6),new THREE.MeshToonMaterial({color:0x1B1035}));base.position.y=-.15;base.rotation.y=Math.PI/6;scene.add(base);
+ Object.assign(G3,{renderer:ren,scene,cam,ctl,dyn:new THREE.Group(),w:0,h:0});scene.add(G3.dyn);
+ const tm=(c,o)=>new THREE.MeshBasicMaterial(Object.assign({color:c,transparent:true,depthWrite:false},o||{}));
+ G3.geo={plate:new THREE.CylinderGeometry(.5,.5,.02,6),ring:new THREE.RingGeometry(.4,.5,6,1,Math.PI/6),dot:new THREE.CircleGeometry(.12,20),dashRing:new THREE.RingGeometry(.1,.17,20),
+  lastRing:new THREE.RingGeometry(.42,.48,6,1,Math.PI/6),baseDisc:new THREE.CylinderGeometry(.33,.36,.07,24),crate:new THREE.BoxGeometry(.3,.24,.3)};
+ G3.mat={hot:tm(0xFF4D7E,{opacity:.55}),warn:tm(0xFF4D7E,{opacity:.4}),deploy:tm(0x38D6F5,{opacity:.22}),atk:tm(0xFF4D7E,{opacity:.95,side:THREE.DoubleSide}),
+  dot:tm(0x38D6F5,{opacity:.95}),dash:tm(0x38D6F5,{opacity:.95,side:THREE.DoubleSide}),last:tm(0xFF4D7E,{opacity:.85,side:THREE.DoubleSide}),
+  crate:new THREE.MeshToonMaterial({color:0xFFC93C}),P:new THREE.MeshToonMaterial({color:0x38D6F5}),E:new THREE.MeshToonMaterial({color:0xFF4D7E})};
+ const ptrs=new Set();let tap=null;
+ ren.domElement.addEventListener('pointerdown',e=>{ptrs.add(e.pointerId);tap=ptrs.size===1?{x:e.clientX,y:e.clientY,t:performance.now()}:null;});
+ const up=e=>{const had=ptrs.has(e.pointerId);ptrs.delete(e.pointerId);
+  if(had&&tap&&e.type==='pointerup'&&Math.hypot(e.clientX-tap.x,e.clientY-tap.y)<12&&performance.now()-tap.t<650)pick3D(e);
+  if(!ptrs.size)tap=null;};
+ ren.domElement.addEventListener('pointerup',up);ren.domElement.addEventListener('pointercancel',up);
+ G3.ray=new THREE.Raycaster();
+}
+function pick3D(e){
+ const rc=G3.renderer.domElement.getBoundingClientRect();
+ const v=new THREE.Vector2((e.clientX-rc.left)/rc.width*2-1,-((e.clientY-rc.top)/rc.height)*2+1);
+ G3.ray.setFromCamera(v,G3.cam);
+ const hits=G3.ray.intersectObjects(G3.pick,false);
+ const h=hits.find(x=>x.object.userData&&x.object.userData.r!==undefined);
+ if(h)tapHex(h.object.userData.r,h.object.userData.c);
+}
+function buildTiles(){
+ if(G3.tiles)G3.scene.remove(G3.tiles);
+ const grp=new THREE.Group(),mats={},edge=new THREE.LineBasicMaterial({color:0x1B1035});
+ const mat=(c,o)=>{const k=c+(o||'');return mats[k]||(mats[k]=new THREE.MeshToonMaterial(o?{color:c,transparent:true,opacity:o}:{color:c}));};
+ G3.tilePick=[];G3.top={};
+ const add=(geo,m,x,y,z,r,c)=>{const me=new THREE.Mesh(geo,m);me.position.set(x,y,z);me.userData={r,c};grp.add(me);G3.tilePick.push(me);
+  const e=new THREE.LineSegments(new THREE.EdgesGeometry(geo),edge);e.position.copy(me.position);grp.add(e);return me;};
+ for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+  const t=terr(r,c),h=TH[t],[x,z]=pos3(r,c);G3.top[r+','+c]=h;
+  let col=TCOL[t];if(!t&&r<=1)col='#3D3170';if(!t&&r>=ROWS-2)col='#284378';
+  const geo=t==='H'?new THREE.CylinderGeometry(.36,.555,h,6):new THREE.CylinderGeometry(.555,.555,h,6);
+  add(geo,t==='W'?mat(col,.88):mat(col),x,h/2,z,r,c);
+  if(t==='U'){[[-.2,.1,.36],[.02,-.12,.6],[.22,.12,.28]].forEach(([dx,dz,bh])=>add(new THREE.BoxGeometry(.17,bh,.17),mat('#A39BCB'),x+dx,h+bh/2,z+dz,r,c));}
+  if(t==='F'){[[-.2,.08,.42,'#2FA36B'],[.2,.1,.4,'#2FA36B'],[0,-.16,.55,'#3CC07E']].forEach(([dx,dz,ch,cc])=>add(new THREE.ConeGeometry(.15,ch,6),mat(cc),x+dx,h+ch/2,z+dz,r,c));}
+  if(t==='W'){const w=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,.01,6),new THREE.MeshBasicMaterial({color:0x9CC3FF,transparent:true,opacity:.25}));w.position.set(x,h+.006,z);grp.add(w);}
+ }
+ G3.scene.add(grp);G3.tiles=grp;G3.mapName=S.map.name;
+}
+function update3D(){
+ if(!G3.tiles||G3.mapName!==S.map.name){buildTiles();resetCam();}
+ const dyn=G3.dyn;while(dyn.children.length)dyn.remove(dyn.children[0]);
+ G3.pick=G3.tilePick.slice();G3.crates=[];G3.warns=[];
+ const flat=(geo,m,x,y,z)=>{const o=new THREE.Mesh(geo,m);o.rotation.x=-Math.PI/2;o.position.set(x,y,z);dyn.add(o);return o;};
+ const moves=S.sel&&S.phase==='battle'?getMoves(S.sel):[],mk=new Map(moves.map(m=>[m.r+','+m.c,m]));
+ for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+  const k=r+','+c,top=G3.top[k],[x,z]=pos3(r,c);
+  if(S.phase!=='deploy'){
+   if(zoneHot(r,c,0)){const o=new THREE.Mesh(G3.geo.plate,G3.mat.hot);o.position.set(x,top+.012,z);dyn.add(o);}
+   else if(zoneHot(r,c,10000)){const o=new THREE.Mesh(G3.geo.plate,G3.mat.warn);o.position.set(x,top+.012,z);dyn.add(o);}
+  }
+  if(S.phase==='deploy'&&r>=ROWS-2){const o=new THREE.Mesh(G3.geo.plate,G3.mat.deploy);o.position.set(x,top+.012,z);dyn.add(o);}
+  if(S.crates.some(q=>q.r===r&&q.c===c)){const o=new THREE.Mesh(G3.geo.crate,G3.mat.crate);o.position.set(x,top+.3,z);dyn.add(o);G3.crates.push(o);}
+  if(S.last&&S.last.side==='E'&&!S.over&&((S.last.fr===r&&S.last.fc===c)||(S.last.tr===r&&S.last.tc===c)))flat(G3.geo.lastRing,G3.mat.last,x,top+.02,z);
+  const m=mk.get(k);
+  if(m){const o=pieceAt(r,c),atk=o&&o.side==='E'&&visibleTo(o,'P');
+   if(atk)flat(G3.geo.ring,G3.mat.atk,x,top+.03,z);else if(m.dash)flat(G3.geo.dashRing,G3.mat.dash,x,top+.03,z);else flat(G3.geo.dot,G3.mat.dot,x,top+.03,z);}
+ }
+ for(const p of S.pieces){
+  if(p.side==='E'&&!visibleTo(p,'P'))continue;
+  const top=G3.top[p.r+','+p.c],[x,z]=pos3(p.r,p.c);
+  const b=new THREE.Mesh(G3.geo.baseDisc,G3.mat[p.side]);b.position.set(x,top+.035,z);b.userData={r:p.r,c:p.c};dyn.add(b);G3.pick.push(b);
+  const sp=new THREE.Sprite(spriteMat(tokenTex(p)));const sc=S.sel===p?.98:.84;sp.scale.set(sc,sc,1);sp.position.set(x,top+.5,z);sp.userData={r:p.r,c:p.c};dyn.add(sp);G3.pick.unshift(sp);
+ }
+}
+function frame3D(ts){
+ const wrap=$('boardWrap'),w=wrap.clientWidth,h=wrap.clientHeight;
+ if(w&&h&&(w!==G3.w||h!==G3.h)){G3.w=w;G3.h=h;G3.renderer.setSize(w,h,false);G3.cam.aspect=w/h;G3.cam.updateProjectionMatrix();if(!G3.camSet){G3.camSet=true;resetCam();}}
+ if(G3.mat)G3.mat.warn.opacity=.15+.35*(Math.sin(ts/180)>0?1:0);
+ if(G3.crates)for(const o of G3.crates){o.rotation.y=ts/600;o.position.y+=Math.sin(ts/300)*.0015;}
+ G3.ctl.update();G3.renderer.render(G3.scene,G3.cam);
+}
+
+/* ---------- story ---------- */
+const CH=[
+ {title:'The Hollow Hour',map:0,noise:1.6,
+  intro:[['N','3:00 a.m. The Veil rolls over the old market crossroads, and every clock in Lumina City stops.'],
+   ['C','Director Mark Dave, you\'re on comms. Shadows are moving on the far side of the lake.'],
+   ['I','Ma\'am, those shadows are wearing our uniforms.'],
+   ['C','Then we find out what they really are. Every clash shows a face. Protect President Aoi, and find theirs.']],
+  win:[['A','Did you see that, Director? They broke like glass the second their President fell!'],
+   ['C','Echoes. Copies the Veil made of us. Someone is building an army out of our reflections.']],
+  lose:['C','The Veil lifts at 3:03 and nobody remembers. We get another night. Again, Director.']},
+ {title:'Mirror on the Water',map:1,noise:1.2,
+  intro:[['N','Night two. The river lies perfectly still across the delta, like a mirror someone left on the ground.'],
+   ['T','Every Echo we tracked last night came out of the water. The river is reflecting us.'],
+   ['A','So we fight our own reflections at the bridges. Great. Biscuit hates bridges.'],
+   ['C','Three crossings, Director. Choke points cut both ways.']],
+  win:[['S','I followed one Echo back into the water. On the other side of the reflection there\'s a garden. Roses everywhere.'],
+   ['T','The old botanical park. Nobody has been inside it in years.']],
+  lose:['T','Reset. Dry off. Same river tomorrow night.']},
+ {title:'The Rose Garden',map:3,noise:.9,
+  intro:[['N','The botanical park has grown wild overnight. Red roses climb every tree.'],
+   ['S','The Veil is thickest under the leaves. Anything in there is invisible until you walk into it.'],
+   ['A','And tanks can\'t get through trees. Biscuit is staying home tonight.'],
+   ['I','Then it\'s on the infantry. We can do this, Director.']],
+  win:[['I','There was a name carved into the roots. The Rose Regent.'],
+   ['C','A leader. Echoes don\'t think for themselves. Someone is giving them orders.']],
+  lose:['I','I walked straight into one. I won\'t do that twice.']},
+ {title:'Glass Towers',map:2,noise:.7,
+  intro:[['N','Downtown. A thousand glass windows, a thousand reflections.'],
+   ['V','Director, I saw myself in my office window tonight. She smiled at me. I didn\'t.'],
+   ['EV','The city prefers me, Aoi. It always has.'],
+   ['C','Her Echo leads the Rose Legion tonight. If the false President breaks, the copies lose their shape.'],
+   ['V','Then I hold my ground. Hold the city with me, Director.']],
+  win:[['V','She whispered something before she shattered. "The Regent wears the Director\'s face."'],
+   ['C','Director Mark Dave... is that true?']],
+  lose:['V','I\'m still here. That\'s what matters. Again.']},
+ {title:'Dawn Over the Quarry',map:4,noise:.5,
+  intro:[['N','The last night. In the open quarry outside the city, the Veil gathers into a single shape.'],
+   ['R','Hello, Mark Dave. I have watched every move you ever made. I am every move you ever made.'],
+   ['C','It\'s your Echo, Director. It knows all of your tactics.'],
+   ['S','Then don\'t use them. Surprise it.'],
+   ['A','Open ground at last. Biscuit has been waiting all week for this.']],
+  win:[['N','The Regent\'s President breaks. Across the quarry, every Echo falls like a puppet with its strings cut.'],
+   ['V','Look. The sun is coming up, and for once, everyone in Lumina City will remember the night.'],
+   ['C','Night Division, stand down. Good work, Director Mark Dave.']],
+  lose:['R','Predictable. Come back tomorrow, Director, and try being someone else.']}];
+let progress=0,storyCh=null;
+try{progress=Math.min(CH.length,parseInt(localStorage.getItem('mdnd-progress')||'0',10)||0);}catch(e){}
+function saveProgress(){try{localStorage.setItem('mdnd-progress',String(progress));}catch(e){}}
+function drawChapters(){
+ $('chapters').innerHTML=CH.map((c,i)=>{const st=i<progress?'<span class="st done">Cleared</span>':i===progress?'<span class="st next">Play</span>':'<span class="st">Locked</span>';
+  return `<button class="chap" data-ch="${i}" ${i>progress?'disabled':''}><span class="n">${i+1}</span><span class="t"><b>${c.title}</b><small>${MAPS[c.map].name}</small></span>${st}</button>`;}).join('');
+}
+function speaker(k){
+ if(k==='N')return null;
+ if(k==='R')return{sym:'unk',name:'The Rose Regent',e:true};
+ if(k[0]==='E')return{sym:`p-${k[1]}-E`,name:`${U[k[1]].hero}'s Echo`,e:true};
+ return{sym:`p-${k}-P`,name:U[k].hero};
+}
+function playDialogue(title,sub,lines){
+ return new Promise(res=>{
+  let i=0;const ov=$('overlay');
+  const end=()=>{ov.onclick=null;closeOverlay();res();};
+  const draw=()=>{const[k,t]=lines[i],sp=speaker(k);
+   ov.className='overlay vn';
+   ov.innerHTML=`<div class="vnbox"><div class="vntitle"><small>${sub}</small>${title}</div><div class="vnpanel ${sp&&sp.e?'e':''}">${sp?`<svg viewBox="0 0 100 100"><use href="#${sp.sym}"/></svg>`:''}<div class="grow"><div class="vnname">${sp?sp.name:''}</div><div class="vntext ${sp?'':'narr'}">${t}</div></div></div><div class="vnmeta"><span>Tap to continue (${i+1} of ${lines.length})</span><button class="btn ghost small" id="skipBtn">Skip</button></div></div>`;
+   $('skipBtn').onclick=e=>{e.stopPropagation();end();};};
+  draw();
+  setTimeout(()=>{ov.onclick=()=>{i++;if(i>=lines.length)end();else draw();};},0);
+ });
+}
+async function startChapter(i){
+ storyCh=i;mapIdx=CH[i].map;
+ $('title').classList.add('hidden');
+ await playDialogue(CH[i].title,`Chapter ${i+1}, ${MAPS[CH[i].map].name}`,CH[i].intro);
+ startDeploy();
+}
+async function storyWin(i){
+ progress=Math.max(progress,i+1);saveProgress();
+ await playDialogue(CH[i].title,`Chapter ${i+1} cleared`,CH[i].win);
+ if(i+1<CH.length){startChapter(i+1);return;}
+ const ov=$('overlay');ov.className='overlay dim';
+ ov.innerHTML=`<div class="panel"><h3 style="color:var(--gold)">Dawn</h3><p>The Veil is broken and Lumina City wakes up remembering. Thank you for leading the Night Division, Director Mark Dave. Every chapter stays open for replays.</p><div class="btns"><button class="btn" id="endBtn">Back to title</button></div></div>`;
+ $('endBtn').onclick=()=>{closeOverlay();showTitle();};
+}
+
 /* ---------- screens ---------- */
-function showTitle(){S={phase:'title'};$('game').classList.add('hidden');$('title').classList.remove('hidden');}
-function startDeploy(){newGame(mapIdx,shotSec);$('title').classList.add('hidden');$('game').classList.remove('hidden');render();updateHud();}
+function showTitle(){S={phase:'title'};drawChapters();$('game').classList.add('hidden');$('title').classList.remove('hidden');$('title').scrollTop=0;}
+function startDeploy(){newGame(mapIdx,shotSec);S.story=storyCh;S.noise=storyCh===null?.7:CH[storyCh].noise;$('title').classList.add('hidden');$('game').classList.remove('hidden');render();updateHud();}
 function buildTitle(){
  $('squad').innerHTML=['A','I','T','C','S','V'].map(t=>`<div class="card"><svg viewBox="0 0 100 100"><use href="#p-${t}-P"/></svg><b>${U[t].hero}</b><i>${U[t].name}</i><em>${U[t].beats}</em></div>`).join('');
  const drawMaps=()=>{$('maps').innerHTML=MAPS.map((m,i)=>`<button class="chip" aria-pressed="${i===mapIdx}" data-map="${i}"><b>${m.name}</b><small>${m.blurb}</small></button>`).join('');};
- const drawShots=()=>{$('shots').innerHTML=[5,10].map(s=>`<button class="chip" aria-pressed="${s===shotSec}" data-shot="${s}"><b>${s} seconds</b><small>${s===5?'As designed':'Relaxed'}</small></button>`).join('');};
+ const drawShots=()=>{$('shots').innerHTML=[[5,'Blitz','5 s per move, 3:00 battle'],[10,'Standard','10 s per move, 3:00 battle'],[0,'Relaxed','No timers, 60 turns']].map(([v,n,d])=>`<button class="chip" aria-pressed="${v===shotSec}" data-shot="${v}"><b>${n}</b><small>${d}</small></button>`).join('');};
  drawMaps();drawShots();
  $('maps').onclick=e=>{const b=e.target.closest('[data-map]');if(b){mapIdx=+b.dataset.map;drawMaps();}};
- $('shots').onclick=e=>{const b=e.target.closest('[data-shot]');if(b){shotSec=+b.dataset.shot;drawShots();}};
- $('startBtn').onclick=startDeploy;
+ $('shots').onclick=e=>{const b=e.target.closest('[data-shot]');if(b){shotSec=+b.dataset.shot;try{localStorage.setItem('msg-pace',String(shotSec));}catch(e){}drawShots();}};
+ $('startBtn').onclick=()=>{storyCh=null;startDeploy();};
+ drawChapters();
+ $('chapters').onclick=e=>{const b=e.target.closest('[data-ch]');if(b&&!b.disabled)startChapter(+b.dataset.ch);};
 }
 function wire(){
  $('board').addEventListener('click',e=>{const g=e.target.closest('[data-r]');if(g)tapHex(+g.dataset.r,+g.dataset.c);});
@@ -694,16 +996,19 @@ function wire(){
   if(cb&&S.phase==='battle'&&S.turn==='P'&&!S.busy){S.mode=S.mode===cb.dataset.card?null:cb.dataset.card;S.sel=null;render();}
  });
  $('pauseBtn').onclick=pause;
+ $('viewBtn').onclick=()=>{view3d=!view3d;try{localStorage.setItem('msg-view',view3d?'3d':'2d');}catch(e){}render();};
+ $('resetBtn').onclick=()=>{if(G3.cam)resetCam();};
 }
 let lastTs=0;
 function tick(ts){
  const dt=lastTs?Math.min(100,ts-lastTs):0;lastTs=ts;
- if(S.phase==='battle'&&!S.over&&!S.paused&&!S.clashOpen){
+ if(S.phase==='battle'&&!S.over&&!S.paused&&!S.clashOpen&&!S.relaxed){
   S.elapsed+=dt;processEvents();
   if(!S.over&&S.turn==='P'&&!S.busy){S.shotLeft-=dt;if(S.shotLeft<=0)onTimeout();}
  }
  if(S.over&&!S.resultShown&&!S.busy&&!S.clashOpen)maybeResult();
  updateHud();
+ if(G3.renderer&&view3d&&G3.ok&&!$('game').classList.contains('hidden'))frame3D(ts);
  requestAnimationFrame(tick);
 }
 
@@ -723,6 +1028,7 @@ function simulate(mi){
 window.SG={simulate,resolve,MAPS};
 
 buildSprite();buildTitle();wire();requestAnimationFrame(tick);
+loadPortraits().then(()=>{for(const k in TEX)delete TEX[k];if(S.phase!=='title')render();});
 </script>
 </body>
 </html>
